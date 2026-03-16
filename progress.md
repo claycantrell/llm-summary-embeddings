@@ -16,12 +16,28 @@ Experiments complete. Ready to begin writing.
 - [x] UMAP visualizations (single + 3-product panel)
 
 ## TODO Before / During Writing
-- [ ] Re-label Fire TV Stick reviews with a different LLM (GPT-4o) to rule out same-LLM bias
-- [ ] Cost/benefit analysis (cost per document, latency, when is it worth it)
-- [ ] Summary length ablation (5 vs 15 vs 50 words) — nice to have
-- [ ] Outline the paper
-- [ ] Literature review — position against RAPTOR, HyDE, Dense X, text enrichment paper
+
+### Highest priority (needed for credible submission)
+- [ ] Human validation of ~100-200 Amazon review labels — single biggest vulnerability
+- [ ] Re-label Fire TV Stick reviews with a different LLM (GPT-4o-mini) to rule out same-LLM bias
+- [x] Non-KMeans robustness check — agglomerative (Ward) confirms 9/9 consistent
+- [x] Representation analysis — within/between ratio halves across all products; effect is centroid separation, not cluster compaction
+
+### Important (strengthens the paper)
+- [x] Length-control baselines — truncation makes clustering WORSE; LLM summary at same word count is 3x better
+- [x] Paraphrase baseline — normalization alone does nothing; compression is load-bearing
+- [ ] Second summarization model (GPT-4o-mini or local model) — shows effect isn't model-specific
+- [ ] Cost/benefit analysis (cost per document, latency)
+
+### Nice to have
+- [ ] Summary length ablation (5 vs 15 vs 50 words)
+- [ ] Writing tone cleanup (academic register throughout)
+
+### Writing
+- [x] Outline the paper
+- [ ] Literature review — position against RAPTOR, HyDE, Dense X, text enrichment
 - [ ] Write manuscript
+- [ ] Abstract
 
 ## Sources Collected
 - RAPTOR (Sarthi et al., ICLR 2024) — recursive summarization for retrieval
