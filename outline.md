@@ -123,7 +123,11 @@ Abstractive summarization improves clustering of noisy informal text because it 
 - The effect is observed across 3 products, 3 embedding models spanning short to long context windows, and 9 of 9 tests reaching significance, with independent corroboration on human-labeled data
 - The effect has clear boundaries: it does not help on structured text where surface details carry discriminative signal
 - The compression constraint appears critical: full-length normalization without compression does not reproduce the gains, suggesting that forced prioritization among candidate aspects is a necessary component
-- Future work: test when prompt specificity matters (peripheral content targets), validate with different LLMs and human label validation, test on other informal text domains (social media, support chat)
+- Future work:
+  - **Peripheral-target hypothesis**: In our experiments, the clustering target (complaint type) aligned with the primary content of the text, and generic summarization captured 85% of the improvement. We hypothesize this ratio shifts substantially when the clustering target is peripheral to the text's main content — for example, clustering academic abstracts by methodology rather than topic, clustering support emails by product version rather than reported issue, or clustering medical notes by patient affect rather than diagnosis. In these cases, a generic summary would foreground the primary content and lose the target dimension, making prompt design critical rather than optional. Testing this hypothesis requires datasets where the clustering target is present in the text but not its central focus, and would extend the current work from a noise-removal finding to a more general theory of prompt-controlled embedding geometry
+  - **Multi-label evaluation**: Manual review revealed that some documents express multiple complaint types. Extending the framework to multi-label assignment and evaluation could better capture the complexity of real-world text and raise the performance ceiling
+  - **Cross-domain generalization**: Testing on other informal text domains (social media, support chat, forum posts) and non-English languages
+  - **Alternative summarization models**: Validating with open-source LLMs to establish that the effect is model-independent and to assess the minimum model capability required
 
 ---
 **Target venue:** arXiv preprint (initially), then EMNLP or ACL Findings
