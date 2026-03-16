@@ -2,7 +2,7 @@
 title: "LLM Rewriting as Geometric Transformation: How Summarization Reshapes Embedding Space for Improved Clustering"
 author:
   - name: "Clay Cantrell"
-    affiliation: "University of Southern California"
+    affiliation: "Independent Researcher"
     email: "cacantre@usc.edu"
 date: "March 2026"
 abstract: |
