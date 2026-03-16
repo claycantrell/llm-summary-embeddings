@@ -7,17 +7,18 @@ LLM Rewriting as Geometric Transformation: How Summarization Reshapes Embedding 
 Does LLM rewriting systematically change the geometry of embedding space in ways that improve unsupervised structure, and when does that transformation help versus destroy signal?
 
 ## Thesis Statement
-LLM summarization can improve embedding-based clustering not by adding new information, but by rewriting semantically equivalent noisy texts into a more geometrically clusterable form. The mechanism requires both compression (forcing the LLM to select salient content) and normalization (rewriting that content into canonical language) — neither alone is sufficient. This interaction between LLM rewriting and embedding space geometry is observed across three embedding models spanning short to long context windows and across three consumer product domains, and has clear boundary conditions: it improves clustering on noisy informal text but degrades it on structured text where surface details carry discriminative signal.
+Abstractive summarization improves clustering of noisy informal text because it jointly performs aspect selection and expression normalization, yielding embeddings with greater inter-class separation. The mechanism requires both compression (forcing prioritization among candidate aspects) and normalization (rewriting selected content into canonical language) — in our experiments, neither full-length paraphrasing nor extractive selection reproduced the gains from abstractive summarization. This interaction between LLM rewriting and embedding space geometry is observed across three embedding models spanning short to long context windows and across three consumer product domains, and has clear boundary conditions: it improves clustering on noisy informal text but degrades it on structured text where surface details carry discriminative signal.
 
 ## I. Introduction
 - Embedding models compress text into fixed-dimensional vectors, but noisy informal text (reviews, feedback, social media) produces scattered embedding spaces where semantically similar documents land far apart
 - Motivating example: two Amazon reviews about the same product defect, written in completely different styles, produce distant embeddings despite identical complaint types
 - Prior work studies LLM rewriting as a way to improve downstream matching or retrieval, but does not analyze whether rewriting systematically changes the geometry of embedding space in ways that improve unsupervised structure, nor when that transformation helps versus destroys signal
-- The novelty is the interaction between LLM rewriting and embedding space geometry: the LLM adds no new information, but transforms text into a form that embedding models can organize more effectively
+- The novelty is the interaction between LLM rewriting and embedding space geometry: the LLM re-expresses existing document meaning into a form that embedding models can organize more effectively, without adding external information
 - Our finding: a single LLM summarization step improves V-measure by +0.08 to +0.28 (49–115% relative improvement) on informal product reviews, reaching significance across 3 products and 3 embedding models spanning short to long context windows (9 of 9 tests, p < 0.05)
-- The effect requires both compression and normalization: full-length paraphrasing produces no improvement, and extractive selection without rewriting also fails. The compression constraint forces salience selection; the rewriting normalizes surface expression
-- The effect is largely attributable to generic summarization rather than prompt-specific extraction (neutral prompt captures 85% of the improvement) — because the compression constraint already forces salience selection even without explicit steering
+- The effect requires both compression and normalization: a full-length paraphrase control did not reproduce the gains, nor did extractive selection without rewriting
+- The compression constraint appears to encourage prioritization among candidate aspects even without explicit task steering (neutral prompt captures 85% of the improvement)
 - The effect does NOT hold on structured/factual text (CFPB complaints) — the transformation can also destroy discriminative signal, establishing a clear boundary condition
+- **Contributions**: (1) We show that abstractive summarization consistently improves clustering of noisy informal text across three products and three embedding models. (2) We identify a mechanism: summarization jointly performs aspect selection and expression normalization, increasing inter-class separation more than within-class compaction. (3) We establish a boundary condition: the same transformation degrades clustering on structured text where fine-grained details carry discriminative signal
 
 ## II. Related Work
 - **Summarization for retrieval**: RAPTOR (Sarthi et al., 2024) — recursive summarization for tree-organized retrieval. Closest to our work but focused on retrieval accuracy over long documents, not cluster quality on short noisy text
@@ -25,7 +26,7 @@ LLM summarization can improve embedding-based clustering not by adding new infor
 - **Retrieval granularity**: Dense X Retrieval (Chen et al., 2024) — proposition-level embeddings. Explores finer granularity; our approach goes coarser via summarization
 - **Text enrichment**: LLM-based text enrichment and rewriting for embeddings (2024) — directly tests LLM rewriting but measures retrieval benchmarks, not clustering
 - **LLM-augmented retrieval**: Doc-level embedding via LLM augmentation (Wu & Cao, 2024) — generates synthetic queries/titles. Similar spirit but different mechanism
-- **Gap**: Prior work treats LLM rewriting as a preprocessing step for supervised matching tasks (retrieval, classification) and evaluates it in terms of downstream task accuracy. No work analyzes whether LLM rewriting systematically changes the geometry of embedding space — whether it makes unsupervised structure more or less recoverable. And no work establishes boundary conditions for when the geometric transformation helps versus destroys discriminative signal. This paper connects the LLM rewriting literature with the embedding space geometry literature, two domains usually evaluated independently
+- **Gap**: Prior work treats LLM rewriting as a preprocessing step for supervised matching tasks (retrieval, classification) and evaluates it in terms of downstream task accuracy. We are not aware of prior work that directly evaluates whether LLM rewriting systematically changes the geometry of embedding space — whether it makes unsupervised structure more or less recoverable — or that establishes boundary conditions for when the geometric transformation helps versus destroys discriminative signal. This paper connects the LLM rewriting literature with the embedding space geometry literature, two domains usually evaluated independently
 
 ## III. Method
 ### Dataset Construction
@@ -44,81 +45,84 @@ LLM summarization can improve embedding-based clustering not by adding new infor
 
 ### Ablations and Controls
 - **Prompt ablation**: Complaint-focused ("what went wrong?") vs neutral ("summarize this review") — measures how much improvement is prompt-dependent vs inherent to summarization
-- **Paraphrase control**: "Rewrite clearly in plain English, keep all information, don't shorten" — isolates normalization from compression. If normalization alone is sufficient, paraphrase should also improve clustering
+- **Paraphrase control**: "Rewrite clearly in plain English, keep all information, don't shorten" — isolates normalization from compression
 - **Extractive baselines**: TF-IDF best sentence, longest sentence — tests whether content selection without LLM rewriting is sufficient
 - **Clustering robustness**: Agglomerative clustering (Ward linkage) alongside KMeans to show the effect is not algorithm-specific
 
-### Representation Analysis
-- Direct geometric measures to support the "embedding space geometry" claim:
-  - Average intra-class cosine similarity before/after summarization
-  - Inter-class centroid separation
-  - Within/between cluster distance ratios
-- These supplement V-measure and ARI with direct evidence about embedding space structure
-
 ## IV. Results
-### Primary Finding: Summaries improve clustering on informal text
+
+### 4.1 Primary effect: summaries improve clustering on informal text
 - Fire TV Stick (859 reviews, 9 categories): V-measure improves by +0.14 to +0.19 across three models (all p < 0.001)
 - Fitbit Charge (454 reviews, 7 categories): V-measure improves by +0.17 to +0.28 across three models (all p < 0.001)
 - Senso Headphones (813 reviews, 10 categories): V-measure improves by +0.08 to +0.19 across three models (all p < 0.05)
 - 9 of 9 model-product combinations reach significance
-- UMAP visualizations illustrate the geometric shift (raw embeddings exhibit diffuse structure; summary embeddings show regional clustering by complaint type). Used as illustration, not as primary evidence
+- Confirmed with agglomerative clustering: 9 of 9 consistent
 
-### Effect persists with long-context models
-- The persistence of the effect with nomic-embed-text-v1.5 (8192 token context) suggests the gains are not primarily explained by input truncation, and are more consistent with representational normalization than mere capacity recovery
-- Long context does not guarantee perfect use of all context — but the fact that the effect holds (and in some cases grows) with a model that faces no truncation pressure shifts the burden of proof away from the truncation explanation
-- Effect actually increases with model capability on Fire TV Stick, suggesting larger models may encode MORE surface variation, not less
+### 4.2 Mechanism ablations: compression and normalization jointly produce the observed gains
+- **Paraphrase (full-length rewrite)**: V=0.240 vs raw V=0.257, p=0.43. Full-length normalization does not reproduce the gains
+- **Extractive selection (TF-IDF best sentence)**: V=0.183, below raw. Content selection without rewriting does not reproduce the gains
+- **LLM summary**: V=0.438, p<0.001. Abstractive summarization — which jointly compresses and normalizes — produces the effect
+- These results suggest that the observed gains require both compression and normalization in our setting: the compression constraint encourages prioritization among candidate aspects; the rewriting normalizes surface expression into canonical form
+- Prompt ablation: neutral prompt captures 85% of complaint-focused improvement, consistent with the compression constraint effectively encouraging aspect prioritization without explicit steering
 
-### Negative control: structured text
-- CFPB complaints: summaries consistently hurt clustering (both across-category and within-category)
+### 4.3 Geometry analysis: the effect is centroid separation
+- Direct geometric measures on embedding space (shown here for BGE-base-en-v1.5; appendix confirms pattern across all three models and datasets):
+  - Intra-class cosine similarity: approximately unchanged (0.64 raw → 0.64 summary)
+  - Inter-centroid cosine similarity: decreases substantially (0.93 → 0.87)
+  - Within/between distance ratio: approximately halves (5.2 → 2.8 on Fire TV Stick; similar on other products)
+- The improvement is primarily **increased inter-class separation**, not tighter within-class compaction
+- Consistent with summarization normalizing reviews into more characteristic, less overlapping language across categories
+- The embedding improvement (V=0.44) exceeds keyword-only improvement (TF-IDF V=0.32), confirming the benefit is not purely lexical
+
+### 4.4 Long-context models
+- The persistence of the effect with nomic-embed-text-v1.5 (8192 token context window, comfortably exceeding review length) suggests the gains are not primarily explained by input truncation, and are more consistent with representational transformation than capacity recovery
+- On Fire TV Stick, the effect is slightly larger on the long-context model, suggesting larger models may encode more surface variation rather than less
+
+### 4.5 Boundary condition: structured text
+- CFPB consumer complaints: summaries consistently hurt clustering (both across-category and within-category)
 - Structured text contains distinguishing factual details that summaries strip away
-- Boundary condition: summaries help when signal is buried in noise, hurt when specifics ARE the signal
+- Summaries improve clustering when signal is obscured by surface variation; they degrade it when surface details carry discriminative signal
 
-### Mechanism: compression-forced salience selection + normalization
-- **Paraphrase (full-length rewrite) does not improve clustering** (V=0.240 vs raw V=0.257, p=0.43). Normalization without compression is not sufficient
-- **Extractive selection does not improve clustering** (TF-IDF best sentence V=0.183, below raw). Selection without normalization is not sufficient
-- **LLM summary improves clustering** (V=0.438, p<0.001). Both selection and normalization together are required
-- The compression constraint is load-bearing: it forces the LLM to make salience judgments, choosing one thing to say about the review. That forced choice creates discriminative structure
-- Neutral prompt captures 85% of complaint-focused improvement — because the compression constraint already forces salience selection even without explicit task steering
-- Caveat: the prompt-specificity ratio likely shifts when the clustering target is peripheral to the text's primary content (future work)
-
-### Corroboration with human labels
+### 4.6 Corroboration with human labels
 - App reviews dataset (Maalej et al.): human-labeled categories, 4 classes
-- Summaries significantly improve clustering (p = 0.02 on BGE)
-- Validates the effect independently of LLM labeling
+- Summaries improve clustering (p = 0.02 on BGE)
+- Validates the effect independently of LLM-generated labels
+- UMAP visualizations illustrate the geometric shift (used as illustration, not primary evidence)
 
 ## V. Discussion
-### What the LLM is doing: compression-forced salience selection + normalization
-- The LLM summary performs two operations that must co-occur:
-  - **Salience selection via compression**: The word limit forces the LLM to choose what matters — which aspect of the review to preserve. This forced choice creates discriminative structure that embedding models can exploit
-  - **Surface normalization**: The rewriting translates diverse expressions into canonical language — stripping emotion, normalizing vocabulary, converting implicit complaints into explicit statements
-- Neither operation alone is sufficient (demonstrated by paraphrase and extractive ablations)
-- The geometric effect is primarily **centroid separation** (inter-class similarity drops from 0.93 to 0.87) rather than cluster compaction (intra-class similarity unchanged). The LLM makes different categories more distinguishable, not same-category documents more similar
-- The embedding improvement (V=0.44) exceeds keyword-only improvement (TF-IDF V=0.32), confirming the benefit is not purely lexical
+
+### Mechanism: compression-forced aspect selection + expression normalization
+- The LLM summary jointly performs two operations:
+  - **Aspect selection via compression**: The word limit forces prioritization among candidate aspects of the review. This forced choice creates discriminative structure that embedding models can exploit
+  - **Expression normalization**: The rewriting translates diverse surface forms into canonical language — converting implicit meaning to explicit statements, normalizing vocabulary, regularizing syntax
+- In our experiments, neither operation alone reproduced the gains from their combination
+- The geometric signature is centroid separation rather than cluster compaction: summarization makes different categories more distinguishable without substantially changing within-category similarity
 
 ### When it works vs when it doesn't
 - Works: informal, noisy, emotional text where the latent structure is obscured by writing style variation
-- Doesn't work: structured, factual text where the distinguishing details are in the specifics
+- Doesn't work: structured, factual text where surface details carry discriminative signal
 - The key variable is signal-to-noise ratio in the text relative to the clustering target
 
 ### Limitations
 - **Label validity** (primary vulnerability): Amazon labels are LLM-generated. Summaries and labels may share latent assumptions; taxonomy may reflect the summarizer's worldview; improvement may partly reflect alignment to the labeling scheme rather than true semantic structure. Mitigated by human-labeled app reviews corroboration, but human validation of a subset of Amazon labels would strengthen the claim substantially
 - **Same-LLM bias**: Claude Haiku labels and summarizes. Mitigated by four converging lines of evidence (human labels, CFPB failure, prompt ablation, multiple embedding models) but not fully resolved. Testing with a second summarization model would help
 - **Single summarization model**: Only Claude Haiku tested. Effect with other LLMs (GPT-4o-mini, open-source models) unknown
+- **Paraphrase control sensitivity**: The paraphrase result may depend on the specific instruction used; alternative paraphrase formulations could yield different results
 - **Cost**: Requires one LLM call per document at index time
-- **Prompt ablation scope**: Tested only when clustering target aligns with primary content. Ratio of generic vs prompt-specific benefit may differ for peripheral targets
+- **Prompt ablation scope**: Tested only when clustering target aligns with primary content. The ratio of generic vs prompt-specific benefit may differ for peripheral targets
 
 ### Practical implications
-- For anyone clustering customer feedback, support tickets, reviews, or social media: summarize first, then embed
-- No prompt engineering required — generic summarization works
-- Works with any embedding model, including small/cheap ones
+- For clustering customer feedback, support tickets, reviews, or social media: summarize first, then embed
+- Generic summarization is sufficient — no prompt engineering required
+- Works across all three tested embedding models, including a small model
 - Index-time cost only — retrieval/clustering is unchanged
 
 ## VI. Conclusion
-- LLM summarization improves embedding-based clustering not by adding information but by rewriting noisy text into a more geometrically clusterable form through compression-forced salience selection combined with surface normalization
+- Abstractive summarization improves embedding-based clustering of noisy informal text by jointly performing aspect selection and expression normalization, yielding embeddings with greater inter-class separation
 - The effect is observed across 3 products, 3 embedding models spanning short to long context windows, and 9 of 9 tests reaching significance, with independent corroboration on human-labeled data
-- The effect has clear boundaries: doesn't help on structured text
-- The effect is largely attributable to the compression constraint forcing salience selection rather than prompt-specific extraction (neutral prompt captures 85%); full-length normalization without compression produces no improvement
-- Future work: test when prompt specificity matters (peripheral content targets), validate with different LLMs, test on other informal text domains (social media, support chat)
+- The effect has clear boundaries: it does not help on structured text where surface details carry discriminative signal
+- The compression constraint appears critical: full-length normalization without compression does not reproduce the gains, suggesting that forced prioritization among candidate aspects is a necessary component
+- Future work: test when prompt specificity matters (peripheral content targets), validate with different LLMs and human label validation, test on other informal text domains (social media, support chat)
 
 ---
 **Target venue:** arXiv preprint (initially), then EMNLP or ACL Findings
