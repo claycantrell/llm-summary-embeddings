@@ -1,5 +1,5 @@
 ---
-title: "How Summarization Reshapes Embedding Space for Clustering Noisy Informal Text"
+title: "How Abstractive Summarization Reshapes Embedding Space for Clustering Noisy Informal Text"
 author:
   - name: "Clay Cantrell"
     affiliation: "Independent Researcher"
