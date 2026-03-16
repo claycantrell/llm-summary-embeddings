@@ -53,3 +53,7 @@ node_modules/
 
 # Uncomment to stop tracking source PDFs (they can be large):
 # sources/*.pdf
+
+# Experiment data and caches (large files, API response caches)
+data/
+cache/

@@ -1,27 +1,41 @@
 # Progress
 
-<!-- Claude updates this file automatically at every save point. You don't need to edit it yourself. -->
-
 ## Status
-Just started — project not yet set up.
+Experiments complete. Ready to begin writing.
 
-## Sections
-- [ ] I. Introduction
-- [ ] II. Background / Literature Review
-- [ ] III. *(not yet defined)*
-- [ ] IV. *(not yet defined)*
-- [ ] V. Discussion
-- [ ] VI. Conclusion
+## Experiments Done
+- [x] CFPB across-category clustering (negative result)
+- [x] CFPB within-category clustering (negative result)
+- [x] App reviews — human-labeled, 4 categories (positive, p=0.02)
+- [x] Amazon appliances — 11 then 7 categories (positive direction, not significant)
+- [x] Fire TV Stick — 9 categories, 3 models (positive, p<0.001 all)
+- [x] Fitbit Charge — 7 categories, 3 models (positive, p<0.001 all)
+- [x] Senso BT Headphones — 10 categories, 3 models (positive, p<0.001 all)
+- [x] Prompt ablation — complaint-focused vs neutral (85% is noise removal)
+- [x] Data integrity / leakage checks
+- [x] UMAP visualizations (single + 3-product panel)
 
-## Word Count
-<!-- Track words drafted against the word budget from the writing plan. -->
-0 of ~_____ budget drafted
+## TODO Before / During Writing
+- [ ] Re-label Fire TV Stick reviews with a different LLM (GPT-4o) to rule out same-LLM bias
+- [ ] Cost/benefit analysis (cost per document, latency, when is it worth it)
+- [ ] Summary length ablation (5 vs 15 vs 50 words) — nice to have
+- [ ] Outline the paper
+- [ ] Literature review — position against RAPTOR, HyDE, Dense X, text enrichment paper
+- [ ] Write manuscript
 
-## Sources
-No papers collected yet.
+## Sources Collected
+- RAPTOR (Sarthi et al., ICLR 2024) — recursive summarization for retrieval
+- HyDE (Gao et al., ACL 2023) — hypothetical document embeddings
+- Dense X Retrieval (Chen et al., EMNLP 2024) — proposition-level granularity
+- LLM-Augmented Retrieval (Wu & Cao, 2024) — doc-level embedding via LLM
+- Enhancing Embedding via Text Enrichment (2024) — LLM rewriting before embedding
+- Improving Text Embeddings with LLMs (2024) — synthetic training data
 
 ### Still Needed
-<!-- List sources that need to be found, grouped by section. Keep this in sync with search-queue.md. -->
+- Embedding model papers (MiniLM, BGE, Nomic)
+- Clustering methodology references (KMeans, V-measure, bootstrap)
+- Qualitative coding / grounded theory methodology references
+- Any papers on noise in embedding spaces
 
 ## Where We Left Off
-New project. User has not started working yet.
+All experiments complete with strong results. Three products, three models, all significant. Prompt ablation shows effect is primarily noise removal. Data integrity checks passed with same-LLM bias flagged as limitation (mitigated by human-labeled app reviews result). Next step: outline the paper and start writing.

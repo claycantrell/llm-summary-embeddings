@@ -15,3 +15,14 @@ papis
 
 # Search (additional sources)
 pyalex
+
+# Experiment pipeline
+anthropic>=0.40
+python-dotenv
+pandas
+numpy
+scikit-learn
+matplotlib
+umap-learn
+requests
+sentence-transformers
