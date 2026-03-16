@@ -225,9 +225,16 @@ While summaries generally captured the primary complaint, we observed three recu
 
 **Category boundary collapse.** Semantically adjacent categories (e.g., "device freezing" vs "inadequate performance") can produce near-identical summaries. "Device freezes frequently" and "device runs very slowly" are distinct complaints but may produce overlapping embeddings after summarization. This likely contributes to residual cluster overlap and limits the achievable V-measure.
 
-## J. Note on the Paraphrase Prompt
+## J. Paraphrase Control Variants
 
-The paraphrase prompt includes the instruction "remove emotional language." A reviewer may note that this is not a pure paraphrase---it is a meaning-modifying operation that strips affect. We acknowledge this. However, the paraphrase still produced no clustering improvement ($\Delta$ = -0.018, $p$ = 0.43), suggesting that even with affect removal, full-length normalization without compression is insufficient. A stricter paraphrase control ("rewrite for clarity only, preserving tone") would further isolate the compression mechanism, and we note this as a direction for future work.
+The primary paraphrase prompt ("rewrite in clear, plain English; remove emotional language") could be considered an interventionist baseline rather than a pure paraphrase. To address this, we tested a second variant that preserves tone: "rewrite for clarity only; preserve the original tone, emotion, and sentiment; do not remove emotional language or opinions; keep the same length and all content; only fix grammar, spelling, and sentence structure."
+
+| Paraphrase Variant | Avg Words | V-measure | vs Raw |
+|---|---|---|---|
+| Remove emotion | 46 | 0.240 | -0.018 ($p$ = 0.43) |
+| Preserve tone (clarity only) | 50 | 0.226 | -0.032 ($p$ = 0.44) |
+
+Neither variant reproduced the gains from abstractive summarization ($\Delta$ = +0.181). The tone-preserving variant performed slightly worse than the emotion-removing variant, consistent with the interpretation that affect removal alone does not drive the improvement. Full-length rewriting without compression fails regardless of whether tone is preserved or stripped.
 
 ## K. Sample Summaries and Paraphrases
 

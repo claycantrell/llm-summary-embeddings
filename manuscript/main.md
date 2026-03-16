@@ -151,13 +151,14 @@ To isolate the mechanism, we tested conditions that separate compression from no
 | Condition | Avg Words | V-measure | vs Raw |
 |---|---|---|---|
 | Raw text | 65 | 0.257 | --- |
-| Paraphrase (full-length rewrite) | 47 | 0.240 | -0.018 ($p$ = 0.43) |
+| Paraphrase (remove emotion) | 46 | 0.240 | -0.018 ($p$ = 0.43) |
+| Paraphrase (preserve tone) | 50 | 0.226 | -0.032 ($p$ = 0.44) |
 | TF-IDF best sentence (extractive) | 20 | 0.183 | -0.074 |
 | LLM summary (abstractive) | 10 | 0.438 | +0.181 ($p$ < 0.001) |
 
-Table 2: Mechanism ablation. In our formulation, neither normalization without compression (paraphrase) nor selection without normalization (extractive) reproduced the gains from abstractive summarization.
+Table 2: Mechanism ablation. Neither normalization without compression (two paraphrase variants) nor selection without normalization (extractive) reproduced the gains from abstractive summarization.
 
-Full-length paraphrasing---rewriting the review in plain English without shortening---produced no improvement over raw text ($\Delta$ = -0.018, $p$ = 0.43). Extractive selection, which reads the full review and selects the most informative sentence, performed below raw text. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the observed gains depend on the combination of forced prioritization among candidate aspects and expression normalization.
+Full-length paraphrasing produced no improvement over raw text under either formulation: a variant that removes emotional language ($\Delta$ = -0.018, $p$ = 0.43) and a stricter variant that preserves tone and only corrects grammar ($\Delta$ = -0.032, $p$ = 0.44). Extractive selection, which reads the full review and selects the most informative sentence, performed below raw text. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the observed gains depend on the combination of forced prioritization among candidate aspects and expression normalization.
 
 To illustrate, consider a raw review (56 words): *"I am ready to throw this thing away. In the middle of watching shows, it completely stops working. I can sometimes disconnect and reconnect to the internet but most of the time I have to unplug it, plug it back in, wait 30 minutes and then it will work for a short time."* The LLM summary (8 words): *"Device frequently disconnects from internet requiring physical reboot."* The paraphrase (full-length) preserves the narrative structure and emotional tone; the extractive baseline selects a single original sentence with its idiosyncratic phrasing. The abstractive summary strips the narrative, normalizes the vocabulary ("disconnect," "reboot"), and foregrounds the complaint type---producing an embedding that clusters with other WiFi-related complaints regardless of how those complaints were originally expressed.
 
@@ -229,7 +230,7 @@ The key variable is the signal-to-noise ratio relative to the clustering target.
 
 **Single summarization model.** Only Claude Haiku was tested for summarization. The effect with other LLMs or open-source models is unknown.
 
-**Paraphrase control sensitivity.** The paraphrase result may depend on the specific instruction used. Alternative formulations could yield different results.
+**Paraphrase control sensitivity.** We tested two paraphrase formulations (one removing emotional language, one preserving tone) and neither reproduced the gains. However, other formulations could yield different results.
 
 **Embedding model recency.** Our experiments used embedding models from 2021--2023. Whether the effect persists with more recent architectures (e.g., Gemini Embedding, Qwen3-Embedding) remains an open question.
 
