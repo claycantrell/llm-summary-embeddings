@@ -102,7 +102,33 @@ as 'low'. Use the submit_labels tool to return all labels.
 | Exact agreement | 241 (77.2%) |
 | Cohen's kappa | 0.747 |
 
-### C.2 Clustering with Independent Labels (BGE-base-en-v1.5)
+### C.2 Top Disagreement Pairs
+
+Most disagreements occurred between semantically adjacent categories, consistent with genuine ambiguity rather than random noise:
+
+| Category Pair | Disagreements |
+|---|---|
+| Inadequate Performance / Missing Apps | 5 |
+| Missing Apps / Paid Subscriptions | 5 |
+| Freezing and Crashes / Performance | 4 |
+| Freezing and Crashes / Hardware Failure | 4 |
+| Freezing and Crashes / Missing Apps | 4 |
+
+### C.3 Disagreement Examples
+
+**Example 1.** *"It stopped working one week after getting it. I don't know what happened it seems to have great potential but it won't connect and work."*
+Haiku: WiFi and Connectivity Issues. GPT-5-mini: Hardware Failure or Defects. Both labels are defensible---the review describes both a connection failure and a complete device failure. The ambiguity is in the text, not in the models.
+
+**Example 2.** *"if your buying this to 'jailbreak' and watch movies on... DONT.. its not worth $50. its more of a pain in the ass to setup every other month due to new kodi changes..."*
+Haiku: Streaming Quality and Buffering. GPT-5-mini: Difficult Setup and Configuration. The review expresses frustration about both streaming and repeated setup---a genuinely multi-faceted complaint.
+
+**Example 3.** *"Buyers remorse here. I originally owned the fire tv, then bought a roku stick, and finally bought this. The fire tv is by far the best option. Roku has horrible selection of apps..."*
+Haiku: Inadequate Performance and Power. GPT-5-mini: Device Freezing and Crashes. The review mentions both poor performance and app issues across multiple devices, making a single label inherently reductive.
+
+**Example 4.** *"I gave it three stars because three days later after receiving it I had received on my TV screen 'we are unable to contact our server' after trying to figure out how to fix it..."*
+Haiku: WiFi and Connectivity Issues. GPT-5-mini: Remote Control Malfunction. The review describes a server connectivity error that could reasonably be attributed to either network or device issues.
+
+### C.4 Clustering with Independent Labels (BGE-base-en-v1.5)
 
 | Ground Truth Labels | Raw V | Summary V | Delta |
 |---|---|---|---|
@@ -139,7 +165,7 @@ Within/between distance ratio (lower = more clusterable):
 | Senso Headphones | BGE | 4.59 | 2.51 | -45% |
 | Senso Headphones | Nomic | 3.41 | 2.38 | -30% |
 
-The within/between ratio decreases by 30--46% across all 9 conditions, driven by inter-centroid separation (inter-centroid cosine similarity drops by 0.04--0.17) while intra-class similarity remains approximately stable.
+The within/between ratio decreases by 30--46% across all 9 conditions. Inter-centroid cosine similarity drops by 0.04--0.17 (mean -0.08), while intra-class cosine similarity deltas range from -0.02 to +0.03 (mean -0.003), confirming that the effect is driven almost entirely by increased centroid separation rather than within-class compaction.
 
 ## F. Per-Class Intra-Class Similarity (Fire TV Stick, BGE)
 
@@ -177,11 +203,35 @@ Specific complaint types (voice recognition, remote control) show the largest in
 | By issue type (10 categories) | 0.628 | 0.528 | -0.100 |
 | By product type (9 categories) | 0.567 | 0.518 | -0.049 |
 
-No CFPB condition reached significance in favor of summaries.
+Most CFPB conditions were negative, and none significantly favored summaries.
 
-## H. Sample Summaries and Paraphrases
+## H. Text Length Statistics (Fire TV Stick)
 
-### H.1 Fire TV Stick Examples
+| Condition | Mean | Median | SD | Q1 | Q3 | Min | Max |
+|---|---|---|---|---|---|---|---|
+| Raw text | 65.8 | 43 | 69.3 | 22 | 83 | 4 | 685 |
+| Paraphrase | 47.0 | 43 | 25.7 | 24 | 68 | 7 | 107 |
+| LLM summary | 9.7 | 10 | 1.9 | 8 | 11 | 4 | 17 |
+
+Word counts. No summaries exceeded the 20-word limit (0 of 859). Paraphrases are shorter than raw text on average (47 vs 66 words) despite the instruction to preserve length, reflecting the LLM's tendency to omit repetition and filler even when asked not to shorten.
+
+## I. Summary Failure Modes
+
+While summaries generally captured the primary complaint, we observed three recurring failure patterns:
+
+**Overgeneralization.** Some summaries collapse specific complaints into generic language. A review describing a precise hardware defect ("the HDMI connector snapped off inside the TV port") may be summarized as "device has hardware defect," losing the specific failure mode that would distinguish it from other hardware complaints.
+
+**Loss of secondary complaints.** Reviews expressing multiple issues are reduced to one. A review complaining about both WiFi disconnection and an unresponsive remote is summarized as only the WiFi problem. This is by design (the compression constraint forces selection) but means the summary representation is incomplete for multi-faceted reviews.
+
+**Category boundary collapse.** Semantically adjacent categories (e.g., "device freezing" vs "inadequate performance") can produce near-identical summaries. "Device freezes frequently" and "device runs very slowly" are distinct complaints but may produce overlapping embeddings after summarization. This likely contributes to residual cluster overlap and limits the achievable V-measure.
+
+## J. Note on the Paraphrase Prompt
+
+The paraphrase prompt includes the instruction "remove emotional language." A reviewer may note that this is not a pure paraphrase---it is a meaning-modifying operation that strips affect. We acknowledge this. However, the paraphrase still produced no clustering improvement ($\Delta$ = -0.018, $p$ = 0.43), suggesting that even with affect removal, full-length normalization without compression is insufficient. A stricter paraphrase control ("rewrite for clarity only, preserving tone") would further isolate the compression mechanism, and we note this as a direction for future work.
+
+## K. Sample Summaries and Paraphrases
+
+### K.1 Fire TV Stick Examples
 
 **Example 1** (WiFi and Connectivity Issues)
 
@@ -201,7 +251,7 @@ No CFPB condition reached significance in favor of summaries.
 - *Summary (11 words)*: "Voice recognition frequently fails without clear guidance on its limitations."
 - *Paraphrase (30 words)*: "The device works well except when the voice assistant responds with 'I don't know how to respond to that,' which is frustrating for older users with limited technical experience."
 
-### H.2 Extractive Baselines (Fire TV Stick, BGE)
+### K.2 Extractive Baselines (Fire TV Stick, BGE)
 
 | Method | Avg Words | V-measure | vs Raw |
 |---|---|---|---|
