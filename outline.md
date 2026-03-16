@@ -104,7 +104,8 @@ Abstractive summarization improves clustering of noisy informal text because it 
 - The key variable is signal-to-noise ratio in the text relative to the clustering target
 
 ### Limitations
-- **Label validity** (primary vulnerability): Amazon labels are LLM-generated. Summaries and labels may share latent assumptions; taxonomy may reflect the summarizer's worldview; improvement may partly reflect alignment to the labeling scheme rather than true semantic structure. Mitigated by human-labeled app reviews corroboration, but human validation of a subset of Amazon labels would strengthen the claim substantially
+- **Label validity**: Amazon labels are LLM-generated. Mitigated by cross-model validation (GPT-5-mini labels independently confirm the effect, kappa=0.75), human-labeled app reviews corroboration (p=0.02), and author review confirming consensus labels are correct and disagreements reflect genuine multi-label ambiguity. The taxonomy was validated by cross-model agreement and author review, though LLM-derived taxonomies may underrepresent categories that require pragmatic or contextual reasoning beyond current model capabilities
+- **Single-label assumption**: Manual review revealed some reviews express multiple complaint types. The taxonomy assumes single-label assignment, placing a ceiling on clustering performance. Multi-label evaluation could be explored in future work
 - **Same-LLM bias**: Claude Haiku labels and summarizes. Mitigated by four converging lines of evidence (human labels, CFPB failure, prompt ablation, multiple embedding models) but not fully resolved. Testing with a second summarization model would help
 - **Single summarization model**: Only Claude Haiku tested. Effect with other LLMs (GPT-4o-mini, open-source models) unknown
 - **Paraphrase control sensitivity**: The paraphrase result may depend on the specific instruction used; alternative paraphrase formulations could yield different results
