@@ -263,8 +263,13 @@ Neither variant reproduced the gains from abstractive summarization ($\Delta$ = 
 | Method | Avg Words | V-measure | vs Raw |
 |---|---|---|---|
 | Raw text | 65 | 0.257 | --- |
-| TF-IDF best sentence | 20 | 0.183 | -0.074 |
+| TextRank | 21 | 0.164 | -0.093 |
+| LexRank | 15 | 0.172 | -0.085 |
+| LSA | 17 | 0.166 | -0.091 |
+| TF-IDF best sentence | 20 | 0.173 | -0.084 |
 | Longest sentence | 21 | 0.182 | -0.075 |
 | Middle sentence | 14 | 0.138 | -0.119 |
 | Last sentence | 14 | 0.084 | -0.173 |
-| LLM summary | 10 | 0.438 | +0.181 |
+| LLM summary | 9 | 0.438 | +0.181 |
+
+All four graph-based and statistical extractive methods (TextRank, LexRank, LSA, TF-IDF) perform below raw text, scoring V = 0.16--0.17. These methods successfully identify informative sentences but preserve the original author's phrasing, preventing embedding convergence across reviews expressing the same complaint type in different words.

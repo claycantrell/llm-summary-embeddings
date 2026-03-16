@@ -108,7 +108,7 @@ Statistical significance was assessed via bootstrap resampling (100 iterations, 
 
 **Paraphrase control.** We generated full-length rewrites using the instruction "rewrite this review in clear, plain English; keep all information; do not shorten." This isolates normalization from compression: if normalization alone drives the improvement, the paraphrase should also improve clustering.
 
-**Extractive baselines.** We tested TF-IDF best-sentence selection and longest-sentence extraction---methods that read the full review and select content without LLM rewriting.
+**Extractive baselines.** We tested four extractive methods that read the full review and select the most informative sentence without LLM rewriting: TF-IDF best-sentence selection, TextRank, LexRank, and LSA.
 
 **Clustering robustness.** We verified all primary results with agglomerative clustering (Ward linkage) in addition to KMeans.
 
@@ -159,12 +159,15 @@ To isolate the mechanism, we tested conditions that separate compression from no
 | Raw text | 65 | 0.257 | --- |
 | Paraphrase (remove emotion) | 46 | 0.240 | -0.018 ($p$ = 0.43) |
 | Paraphrase (preserve tone) | 50 | 0.226 | -0.032 ($p$ = 0.44) |
-| TF-IDF best sentence (extractive) | 20 | 0.183 | -0.074 |
-| LLM summary (abstractive) | 10 | 0.438 | +0.181 ($p$ < 0.001) |
+| TextRank (extractive) | 21 | 0.164 | -0.093 |
+| LexRank (extractive) | 15 | 0.172 | -0.085 |
+| LSA (extractive) | 17 | 0.166 | -0.091 |
+| TF-IDF best sentence (extractive) | 20 | 0.173 | -0.084 |
+| LLM summary (abstractive) | 9 | 0.438 | +0.181 ($p$ < 0.001) |
 
-Table 2: Mechanism ablation. Neither normalization without compression (two paraphrase variants) nor selection without normalization (extractive) reproduced the gains from abstractive summarization.
+Table 2: Mechanism ablation. Neither normalization without compression (two paraphrase variants) nor selection without normalization (four extractive methods) reproduced the gains from abstractive summarization.
 
-Full-length paraphrasing produced no improvement over raw text under either formulation: a variant that removes emotional language ($\Delta$ = -0.018, $p$ = 0.43) and a stricter variant that preserves tone and only corrects grammar ($\Delta$ = -0.032, $p$ = 0.44). Extractive selection, which reads the full review and selects the most informative sentence, performed below raw text. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the observed gains depend on the combination of forced prioritization among candidate aspects and expression normalization.
+Full-length paraphrasing produced no improvement over raw text under either formulation: a variant that removes emotional language ($\Delta$ = -0.018, $p$ = 0.43) and a stricter variant that preserves tone and only corrects grammar ($\Delta$ = -0.032, $p$ = 0.44). Extractive selection performed consistently below raw text across four methods---TF-IDF, TextRank, LexRank, and LSA---all scoring V = 0.16--0.17. These methods read the full review and select the most informative sentence, but they preserve the original author's phrasing; even when they identify the right content, the idiosyncratic wording prevents embedding convergence across reviews describing the same complaint type. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the observed gains depend on the combination of forced prioritization among candidate aspects and expression normalization.
 
 To illustrate, consider a raw review (56 words): *"I am ready to throw this thing away. In the middle of watching shows, it completely stops working. I can sometimes disconnect and reconnect to the internet but most of the time I have to unplug it, plug it back in, wait 30 minutes and then it will work for a short time."* The LLM summary (8 words): *"Frequent freezing and crashing requiring constant power resets."* The paraphrase (full-length) preserves the narrative structure and emotional tone; the extractive baseline selects a single original sentence with its idiosyncratic phrasing. The abstractive summary strips the narrative, normalizes the vocabulary ("freezing," "crashing," "power resets"), and foregrounds the complaint type---producing an embedding that clusters with other stability complaints regardless of how those complaints were originally expressed.
 
