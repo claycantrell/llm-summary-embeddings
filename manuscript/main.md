@@ -3,7 +3,7 @@ title: "LLM Rewriting as Geometric Transformation: How Summarization Reshapes Em
 author:
   - name: "Clay Cantrell"
     affiliation: "Independent Researcher"
-    email: "cacantre@usc.edu"
+    email: "clay.cantrell@me.com"
 date: "March 2026"
 abstract: |
   Embedding models map text to fixed-dimensional vectors, but noisy informal text---such as product reviews, social media posts, and customer feedback---produces embedding spaces where semantically equivalent documents are scattered by surface-level variation in writing style, emotional tone, and narrative structure. We show that a single LLM abstractive summarization step substantially improves embedding-based cluster quality on such text, improving V-measure by 0.08--0.28 (49--115\% relative improvement) across three consumer product review datasets and three embedding models spanning short to long context windows (9 of 9 tests, $p < 0.05$). We identify a two-part mechanism: the compression constraint forces prioritization among candidate aspects of the text, while the rewriting normalizes surface expression into canonical form. In our experiments, neither full-length paraphrasing nor extractive selection alone reproduced the gains. Direct geometric analysis shows the effect operates primarily through increased inter-class centroid separation rather than within-class compaction. The effect has clear boundary conditions: it does not improve clustering on structured text (consumer financial complaints), where fine-grained surface details carry discriminative signal. These results are independently corroborated on a dataset with human-created labels and validated through cross-model labeling with GPT-5-mini (Cohen's $\kappa = 0.75$).
