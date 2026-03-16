@@ -155,7 +155,7 @@ To isolate the mechanism, we tested conditions that separate compression from no
 | TF-IDF best sentence (extractive) | 20 | 0.183 | -0.074 |
 | LLM summary (abstractive) | 10 | 0.438 | +0.181 ($p$ < 0.001) |
 
-Table 2: Mechanism ablation. Neither normalization without compression (paraphrase) nor selection without normalization (extractive) reproduced the gains.
+Table 2: Mechanism ablation. In our formulation, neither normalization without compression (paraphrase) nor selection without normalization (extractive) reproduced the gains from abstractive summarization.
 
 Full-length paraphrasing---rewriting the review in plain English without shortening---produced no improvement over raw text ($\Delta$ = -0.018, $p$ = 0.43). Extractive selection, which reads the full review and selects the most informative sentence, performed below raw text. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the observed gains depend on the combination of forced prioritization among candidate aspects and expression normalization.
 
@@ -243,7 +243,7 @@ For practitioners clustering customer feedback, support tickets, reviews, or soc
 
 We have shown that LLM abstractive summarization improves embedding-based clustering of noisy informal text by jointly performing aspect selection and expression normalization, yielding embeddings with greater inter-class separation. The effect is observed across three consumer product review datasets, three embedding models spanning short to long context windows, and 9 of 9 model-product combinations reaching statistical significance ($p < 0.05$), with independent corroboration on human-labeled data and cross-model label validation.
 
-The improvement has a clear geometric signature: category centroids move apart while within-class spread remains stable, with the within/between distance ratio approximately halving across all tested products. The compression constraint appears critical: full-length normalization without compression does not reproduce the gains, suggesting that forced prioritization among candidate aspects is an important component of the mechanism in our setting.
+The improvement has a clear geometric signature: category centroids move apart while within-class spread remains stable, with the within/between distance ratio approximately halving across all tested products. The compression constraint appears critical: full-length normalization without compression did not reproduce the gains in our formulation, suggesting that forced prioritization among candidate aspects is an important component of the mechanism in our setting.
 
 The effect has equally clear boundaries. On structured text where fine-grained specifics distinguish categories, summarization collapses rather than clarifies the underlying structure. This asymmetry---the same operation that reveals latent structure in noisy text destroys it in precise text---grounds the contribution in a concrete, falsifiable characterization of when rewriting helps.
 

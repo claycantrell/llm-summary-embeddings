@@ -104,29 +104,29 @@ as 'low'. Use the submit_labels tool to return all labels.
 
 ### C.2 Top Disagreement Pairs
 
-Most disagreements occurred between semantically adjacent categories, consistent with genuine ambiguity rather than random noise:
+After applying the same category merges used in the final dataset (see Section B.1), most disagreements occurred between semantically adjacent categories, consistent with genuine ambiguity rather than random noise:
 
 | Category Pair | Disagreements |
 |---|---|
-| Inadequate Performance / Missing Apps | 5 |
-| Missing Apps / Paid Subscriptions | 5 |
-| Freezing and Crashes / Performance | 4 |
-| Freezing and Crashes / Hardware Failure | 4 |
-| Freezing and Crashes / Missing Apps | 4 |
+| Content Availability Issues / Inadequate Performance and Power | 5 |
+| Content Availability Issues / Voice Recognition Problems | 5 |
+| Content Availability Issues / Device Freezing and Crashes | 5 |
+| Device Freezing and Crashes / Inadequate Performance and Power | 4 |
+| Device Freezing and Crashes / Hardware Failure or Defects | 4 |
 
 ### C.3 Disagreement Examples
 
-**Example 1.** *"It stopped working one week after getting it. I don't know what happened it seems to have great potential but it won't connect and work."*
-Haiku: WiFi and Connectivity Issues. GPT-5-mini: Hardware Failure or Defects. Both labels are defensible---the review describes both a connection failure and a complete device failure. The ambiguity is in the text, not in the models.
+**Example 1.** *"My old one is faster. This one is slow and freezes and for some reason the Hulu app refuses to load, which is weird since my old one was purchased in 2014 I believe."*
+Haiku: Inadequate Performance and Power. GPT-5-mini: Device Freezing and Crashes. Both labels are defensible---the review describes both slowness (performance) and freezing (crashes), with an app-loading failure that could be attributed to either.
 
-**Example 2.** *"if your buying this to 'jailbreak' and watch movies on... DONT.. its not worth $50. its more of a pain in the ass to setup every other month due to new kodi changes..."*
-Haiku: Streaming Quality and Buffering. GPT-5-mini: Difficult Setup and Configuration. The review expresses frustration about both streaming and repeated setup---a genuinely multi-faceted complaint.
+**Example 2.** *"if your buying this to 'jailbreak' and watch movies on... DONT.. its not worth $50. its more of a pain in the ass to setup every other month due to new kodi changes... your lucky if you can get 1 movie to run out of 10."*
+Haiku: Streaming Quality and Buffering. GPT-5-mini: Difficult Setup and Configuration. The review describes both repeated setup difficulty and poor streaming success rates---a genuinely multi-faceted complaint.
 
-**Example 3.** *"Buyers remorse here. I originally owned the fire tv, then bought a roku stick, and finally bought this. The fire tv is by far the best option. Roku has horrible selection of apps..."*
-Haiku: Inadequate Performance and Power. GPT-5-mini: Device Freezing and Crashes. The review mentions both poor performance and app issues across multiple devices, making a single label inherently reductive.
+**Example 3.** *"We bought two of these sticks and 1 is working okay still but the other is constantly shutting down just minutes after starting a program or updating over and over and over again. It's frustrating because it's not that old either."*
+Haiku: Device Freezing and Crashes. GPT-5-mini: Hardware Failure or Defects. The constant shutdowns could reflect either a software stability issue (crashes) or a hardware defect (failing unit). Both interpretations are plausible.
 
-**Example 4.** *"I gave it three stars because three days later after receiving it I had received on my TV screen 'we are unable to contact our server' after trying to figure out how to fix it..."*
-Haiku: WiFi and Connectivity Issues. GPT-5-mini: Remote Control Malfunction. The review describes a server connectivity error that could reasonably be attributed to either network or device issues.
+**Example 4.** *"I am not impressed. You cannot really tell what programs are free and it's easy to inadvertently select a movie that is not free. If it incorporated TV shows it might be helpful and some voice requests it does not grasp."*
+Haiku: Voice Recognition Problems. GPT-5-mini: Content Availability Issues. The review mentions both content confusion (free vs paid, missing TV shows) and voice command failures---two distinct complaints in one review.
 
 ### C.4 Clustering with Independent Labels (BGE-base-en-v1.5)
 
