@@ -128,6 +128,8 @@ Abstractive summarization improves clustering of noisy informal text because it 
   - **Multi-label evaluation**: Manual review revealed that some documents express multiple complaint types. Extending the framework to multi-label assignment and evaluation could better capture the complexity of real-world text and raise the performance ceiling
   - **Cross-domain generalization**: Testing on other informal text domains (social media, support chat, forum posts) and non-English languages
   - **Alternative summarization models**: Validating with open-source LLMs to establish that the effect is model-independent and to assess the minimum model capability required
+  - **Interaction with instruction-tuned embeddings**: Instruction-tuned embedding models (e.g., Instructor, GTE with task instructions) can be directed to focus on specific aspects during encoding — a complementary mechanism to the pre-embedding rewriting we study. An open question is whether LLM summarization still improves clustering when the embedding model is already instruction-tuned toward the clustering target, or whether instruction-tuning makes rewriting redundant. This would clarify whether the benefit comes from the text transformation itself or from the lack of task-awareness in standard embedding models
+  - **Modern embedding architectures**: Our experiments used embedding models from 2021–2023. Testing with current state-of-the-art models (e.g., Gemini Embedding, Qwen3-Embedding, NVIDIA Llama-Embed) would establish whether the effect persists as embedding models improve at handling noisy text, or whether it diminishes as encoders become more capable
 
 ---
 **Target venue:** arXiv preprint (initially), then EMNLP or ACL Findings
