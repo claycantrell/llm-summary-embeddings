@@ -27,13 +27,13 @@ Consider two one-star Amazon reviews about the same product defect. One reviewer
 
 Prior work has explored LLM-based rewriting for retrieval [@sarthi2024raptor; @gao2023hyde; @wu2024llmaugmented], embedding quality [@enrichment2024], and controllable clustering [@controllable2025], and has tested summarization in clustering pipelines with mixed results [@textclustering2024]. However, we are not aware of prior work that isolates generic abstractive summarization as a pre-embedding transformation and analyzes its effect on clustering through direct geometric evidence together with clear boundary conditions for when summarization helps versus hurts.
 
-We show that a single LLM summarization step improves V-measure by +0.08 to +0.28 (49--115% relative improvement) on informal product reviews, reaching significance across three products and three embedding models spanning short to long context windows (9 of 9 tests, $p < 0.05$). We trace the effect to two co-occurring operations: the compression constraint encourages aspect prioritization, while the rewriting normalizes varied surface forms into canonical language. Neither paraphrasing nor extractive selection alone reproduced the gains. Geometric analysis of the embedding space shows the improvement manifests as increased distance between class centroids, not tighter clusters. On structured text, where fine-grained details carry discriminative signal, the same transformation degrades performance.
+We show that a single LLM summarization step improves V-measure by +0.08 to +0.28 (49--115% relative improvement) on informal product reviews, reaching significance across three products and three embedding models spanning short to long context windows (9 of 9 tests, $p < 0.05$). Our ablations suggest the effect depends on two co-occurring operations: the compression constraint encourages aspect prioritization, while the rewriting normalizes varied surface forms into canonical language. Neither paraphrasing nor extractive selection alone reproduced the gains. Geometric analysis of the embedding space shows the improvement manifests as increased distance between class centroids, not tighter clusters. On structured text, where fine-grained details carry discriminative signal, the same transformation degrades performance.
 
 This paper makes three contributions:
 
 1. We show that abstractive summarization consistently improves clustering of noisy informal text across three products and three embedding models.
 2. We identify a two-part mechanism: compression forces aspect prioritization while rewriting normalizes expression, with the geometric effect manifesting primarily as increased centroid separation.
-3. We establish a boundary condition: the same transformation degrades clustering on structured text where specifics rather than semantics distinguish categories.
+3. We establish a boundary condition: the same transformation degrades clustering on structured text where fine-grained details, rather than broad complaint themes, distinguish categories.
 
 # Related Work
 
