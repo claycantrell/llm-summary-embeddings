@@ -104,7 +104,7 @@ as 'low'. Use the submit_labels tool to return all labels.
 
 ### C.2 Top Disagreement Pairs
 
-After applying the same category merges used in the final dataset (see Section B.1), most disagreements occurred between semantically adjacent categories, consistent with genuine ambiguity rather than random noise:
+Using the final category set in Section B.1, most disagreements occurred between semantically adjacent categories, consistent with genuine ambiguity rather than random noise:
 
 | Category Pair | Disagreements |
 |---|---|
@@ -126,7 +126,7 @@ Haiku: Streaming Quality and Buffering. GPT-5-mini: Difficult Setup and Configur
 Haiku: Device Freezing and Crashes. GPT-5-mini: Hardware Failure or Defects. The constant shutdowns could reflect either a software stability issue (crashes) or a hardware defect (failing unit). Both interpretations are plausible.
 
 **Example 4.** *"I am not impressed. You cannot really tell what programs are free and it's easy to inadvertently select a movie that is not free. If it incorporated TV shows it might be helpful and some voice requests it does not grasp."*
-Haiku: Voice Recognition Problems. GPT-5-mini: Content Availability Issues. The review mentions both content confusion (free vs paid, missing TV shows) and voice command failures---two distinct complaints in one review.
+Haiku: Voice Recognition Problems. GPT-5-mini: Content Availability Issues. The first half concerns content availability and pricing confusion; the second half concerns voice-command failure. Either single label is reductive---the review contains two distinct complaint threads that map to different categories.
 
 ### C.4 Clustering with Independent Labels (BGE-base-en-v1.5)
 
