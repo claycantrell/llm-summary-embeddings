@@ -1,9 +1,6 @@
 ---
 title: "How Abstractive Summarization Reshapes Embedding Space for Clustering Noisy Informal Text"
-author:
-  - name: "Clay Cantrell"
-    affiliation: "Independent Researcher"
-    email: "clay.cantrell@me.com"
+author: "Clay Cantrell (Independent Researcher, clay.cantrell@me.com)"
 date: "March 2026"
 abstract: |
   Embedding models map text to fixed-dimensional vectors, but noisy informal text---such as product reviews, social media posts, and customer feedback---produces embedding spaces where semantically equivalent documents are scattered by surface-level variation in writing style, emotional tone, and narrative structure. We show that a single LLM abstractive summarization step substantially improves embedding-based cluster quality on such text, improving V-measure by 0.08--0.28 (49--115\% relative improvement) across three consumer product review datasets and three embedding models spanning short to long context windows (9 of 9 tests, $p < 0.05$). We identify a two-part mechanism: the compression constraint forces prioritization among candidate aspects of the text, while the rewriting normalizes surface expression into canonical form. In our experiments, neither full-length paraphrasing nor extractive selection alone reproduced the gains. Direct geometric analysis shows the effect operates primarily through increased inter-class centroid separation rather than within-class compaction. The effect has clear boundary conditions: it does not improve clustering on structured text (consumer financial complaints), where fine-grained surface details carry discriminative signal. The findings are corroborated on a human-labeled dataset ($p < 0.05$ on all three models) and remain robust under independent relabeling with GPT-5-mini ($\kappa = 0.75$).
@@ -144,11 +141,11 @@ The largest improvements appeared on Fitbit Charge (deltas of +0.17 to +0.28), w
 
 Agglomerative clustering (Ward linkage) confirmed the same pattern: summary embeddings outperformed raw embeddings in all 9 conditions, with deltas ranging from +0.044 to +0.267, confirming the effect is not specific to KMeans' spherical cluster assumption.
 
-![UMAP projections of raw review embeddings (left) versus LLM summary embeddings (right) for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse, overlapping structure; summary embeddings show visible regional clustering by category. Used as illustration, not primary evidence.](figures/umap_comparison_bge.png){#fig:umap width=100%}
+![**Figure 1.** UMAP projections of raw review embeddings (left) versus LLM summary embeddings (right) for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse, overlapping structure; summary embeddings show visible regional clustering by category. Used as illustration, not primary evidence.](figures/umap_comparison_bge.png)
 
-Figure @fig:umap illustrates the geometric shift on the Fire TV Stick dataset. UMAP projections of all three products are provided in Figure @fig:umap-all.
+Figure 1 illustrates the geometric shift on the Fire TV Stick dataset. UMAP projections of all three products are provided in Figure 2.
 
-![UMAP projections across all three products (Fire TV Stick, Fitbit Charge, Senso Bluetooth Headphones), raw versus summary embeddings, BGE-base-en-v1.5.](figures/umap_all_products.png){#fig:umap-all width=100%}
+![**Figure 2.** UMAP projections across all three products (Fire TV Stick, Fitbit Charge, Senso Bluetooth Headphones), raw versus summary embeddings, BGE-base-en-v1.5.](figures/umap_all_products.png)
 
 ## Compression and Normalization Jointly Produce the Observed Gains
 
