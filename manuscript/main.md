@@ -138,6 +138,12 @@ The largest improvements appeared on Fitbit Charge (deltas of +0.17 to +0.28), w
 
 Agglomerative clustering (Ward linkage) confirmed the same pattern: summary embeddings outperformed raw embeddings in all 9 conditions, with deltas ranging from +0.044 to +0.267, confirming the effect is not specific to KMeans' spherical cluster assumption.
 
+![UMAP projections of raw review embeddings (left) versus LLM summary embeddings (right) for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse, overlapping structure; summary embeddings show visible regional clustering by category. Used as illustration, not primary evidence.](figures/umap_comparison_bge.png){#fig:umap width=100%}
+
+Figure @fig:umap illustrates the geometric shift on the Fire TV Stick dataset. UMAP projections of all three products are provided in Figure @fig:umap-all.
+
+![UMAP projections across all three products (Fire TV Stick, Fitbit Charge, Senso Bluetooth Headphones), raw versus summary embeddings, BGE-base-en-v1.5.](figures/umap_all_products.png){#fig:umap-all width=100%}
+
 ## Compression and Normalization Jointly Produce the Observed Gains
 
 To isolate the mechanism, we tested conditions that separate compression from normalization on the Fire TV Stick dataset (BGE-base-en-v1.5):
