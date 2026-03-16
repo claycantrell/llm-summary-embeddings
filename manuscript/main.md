@@ -118,7 +118,7 @@ To directly assess changes in embedding space geometry, we computed:
 
 ## Summaries Improve Clustering on Informal Text
 
-Across all three Amazon product review datasets and all three embedding models, summary embeddings produced higher V-measure scores than raw text embeddings. All 9 model-product combinations reached statistical significance ($p < 0.05$), with 7 of 9 at $p < 0.001$.
+Across all three Amazon product review datasets and all three embedding models, summary embeddings produced higher V-measure and Adjusted Rand Index (ARI) scores than raw text embeddings. All 9 model-product combinations reached statistical significance on V-measure ($p < 0.05$), with 7 of 9 at $p < 0.001$. ARI improvements were of similar magnitude (+0.08 to +0.32). By using reviews of a single product per dataset, we eliminate product-type confounds: the only way to cluster correctly is to understand the complaint type, which is buried in emotional, narrative, and varied language.
 
 | Product | Model | Raw V | Sum V | $\Delta$ | 95% CI | $p$ |
 |---|---|---|---|---|---|---|
@@ -134,7 +134,9 @@ Across all three Amazon product review datasets and all three embedding models, 
 
 Table 1: V-measure comparison across products and embedding models. All differences are statistically significant via bootstrap resampling.
 
-Agglomerative clustering (Ward linkage) confirmed the same pattern: summary embeddings outperformed raw embeddings in all 9 conditions.
+The largest improvements appeared on Fitbit Charge (deltas of +0.17 to +0.28), where reviews tend to be particularly narrative-heavy and emotionally varied, suggesting that noisier text benefits more from normalization. The mid-range model (BGE-base-en-v1.5) showed the most consistent improvements across products.
+
+Agglomerative clustering (Ward linkage) confirmed the same pattern: summary embeddings outperformed raw embeddings in all 9 conditions, with deltas ranging from +0.044 to +0.267, confirming the effect is not specific to KMeans' spherical cluster assumption.
 
 ## Compression and Normalization Jointly Produce the Observed Gains
 
@@ -149,7 +151,9 @@ To isolate the mechanism, we tested conditions that separate compression from no
 
 Table 2: Mechanism ablation. Neither normalization without compression (paraphrase) nor selection without normalization (extractive) reproduced the gains.
 
-Full-length paraphrasing---rewriting the review in plain English without shortening---produced no improvement over raw text. Extractive selection, which reads the full review and selects the most informative sentence, performed below raw text. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the improvement requires both forced prioritization among candidate aspects (via the compression constraint) and expression normalization (via the rewriting).
+Full-length paraphrasing---rewriting the review in plain English without shortening---produced no improvement over raw text ($\Delta$ = -0.018, $p$ = 0.43). Extractive selection, which reads the full review and selects the most informative sentence, performed below raw text. Only abstractive summarization, which jointly compresses and normalizes, produced the observed gains. These results suggest that the improvement requires both forced prioritization among candidate aspects (via the compression constraint) and expression normalization (via the rewriting).
+
+To illustrate, consider a raw review (56 words): *"I am ready to throw this thing away. In the middle of watching shows, it completely stops working. I can sometimes disconnect and reconnect to the internet but most of the time I have to unplug it, plug it back in, wait 30 minutes and then it will work for a short time."* The LLM summary (8 words): *"Device frequently disconnects from internet requiring physical reboot."* The paraphrase (full-length) preserves the narrative structure and emotional tone; the extractive baseline selects a single original sentence with its idiosyncratic phrasing. The abstractive summary strips the narrative, normalizes the vocabulary ("disconnect," "reboot"), and foregrounds the complaint type---producing an embedding that clusters with other WiFi-related complaints regardless of how those complaints were originally expressed.
 
 A prompt ablation further clarified the role of compression: a neutral summary prompt ("summarize this review in one sentence") captured 85% of the improvement achieved by the complaint-focused prompt ("what specifically went wrong?"). This is consistent with the compression constraint effectively encouraging aspect prioritization even without explicit task steering---the word limit alone forces the LLM to select what matters.
 
@@ -170,7 +174,7 @@ Table 3: Embedding space geometry (BGE-base-en-v1.5). Intra-class similarity is 
 
 Intra-class cosine similarity remains approximately constant (deltas of -0.01 to +0.003), indicating that summaries do not substantially pull same-class documents closer together. In contrast, inter-centroid cosine similarity drops by 0.06--0.07, indicating that class centroids move apart. The within/between distance ratio approximately halves across all three products, consistent with summarization normalizing each category's reviews into more characteristic, less overlapping language.
 
-The embedding-based improvement (V = 0.44) exceeds the keyword-only improvement measurable through TF-IDF clustering (V = 0.32), confirming that the benefit is not purely lexical---the embedding model captures semantic similarity in the normalized text beyond shared vocabulary.
+To assess the contribution of vocabulary normalization specifically, we computed TF-IDF bag-of-words clustering on both raw and summary text. TF-IDF clustering on summaries (V = 0.32) substantially outperforms TF-IDF on raw text (V = 0.15), indicating that the LLM produces lexically normalized output---converging on canonical terms like "crashes," "freezes," "reboots" for stability complaints and "subscription," "paid," "free" for content complaints. However, embedding-based clustering of summaries (V = 0.44) exceeds TF-IDF on summaries (V = 0.32), confirming that the benefit is not purely lexical---the embedding model captures semantic similarity in the normalized text beyond shared vocabulary.
 
 ## Long-Context Models
 
@@ -178,9 +182,11 @@ The persistence of the effect with nomic-embed-text-v1.5 (8,192 token context wi
 
 ## Boundary Condition: Structured Text
 
-On the CFPB consumer complaints dataset, summaries consistently degraded clustering performance. In within-category experiments (e.g., 500 mortgage complaints clustered by issue type), summaries performed below raw text across all three embedding models. This pattern held for both KMeans and agglomerative clustering.
+On the CFPB consumer complaints dataset, summaries consistently degraded clustering performance. In within-category experiments (500 mortgage complaints and 500 checking account complaints, each clustered by issue type), V-measure deltas were negative across all three embedding models (e.g., BGE: -0.036 on mortgage, -0.031 on checking). In across-category experiments with 10 product types, summaries again underperformed raw text (BGE: -0.100 V-measure). This pattern held for both KMeans and agglomerative clustering. No CFPB condition reached significance in favor of summaries.
 
-CFPB complaints are structured, factual, and legalistic. Complainants state their issue directly, and the distinguishing details---specific dollar amounts, company names, regulatory citations, procedural descriptions---carry discriminative signal that summaries strip away. This establishes a clear boundary condition: abstractive summarization improves clustering when the semantic signal is obscured by surface variation, but degrades it when surface details carry discriminative signal.
+CFPB complaints are structured, factual, and legalistic. Complainants state their issue directly, and the distinguishing details---specific dollar amounts, company names, regulatory citations, procedural descriptions---carry discriminative signal. One-sentence summaries like "mortgage servicer failed to process payment" are too generic: they collapse distinct issue types (payment processing, escrow disputes, loan modification) that differ only in specifics. Notably, the degradation is most pronounced on the long-context model (Nomic: -0.127 on mortgage), whose ability to process fine-grained details is an advantage that summarization removes.
+
+This establishes a clear boundary condition: abstractive summarization improves clustering when the semantic signal is obscured by surface variation, but degrades it when surface details carry discriminative signal.
 
 ## Corroboration with Human Labels
 
@@ -195,6 +201,8 @@ Our ablation results suggest that the clustering improvement requires two co-occ
 Neither operation alone is sufficient in our experiments. Full-length paraphrasing normalizes expression but, without compression, preserves the full mixture of aspects, leaving the embedding as diffuse as before. Extractive selection compresses by choosing a single sentence but, without normalization, preserves the original author's idiosyncratic phrasing. Abstractive summarization does both.
 
 The geometric signature of this process is centroid separation rather than cluster compaction. Summarization does not make same-category documents much more similar to each other---intra-class cosine similarity is approximately unchanged. Instead, it makes different categories more distinguishable by normalizing each category's reviews into more characteristic language. The category centroids move apart in embedding space while cluster spread remains stable.
+
+Per-class analysis reveals further nuance. Categories with highly specific, distinctive complaints---such as voice recognition problems (+0.034 intra-class similarity delta) and remote control malfunction (+0.031)---show the largest within-class tightening, as summaries converge these reviews onto canonical descriptions. Broader categories such as content availability issues (-0.040) and WiFi connectivity (-0.019) show slight decreases in intra-class similarity, suggesting that summaries may normalize away distinguishing nuance within categories that encompass a wider range of specific complaints. This per-class variation does not undermine the overall effect but suggests that the benefit is largest for well-defined, specific complaint types.
 
 ## When It Works and When It Doesn't
 
@@ -211,13 +219,17 @@ The key variable is the signal-to-noise ratio relative to the clustering target.
 
 **Single-label assumption.** Manual review revealed that some reviews express multiple complaint types. The single-label taxonomy places a ceiling on clustering performance. Multi-label evaluation could be explored in future work.
 
-**Single summarization model.** Only Claude Haiku was tested for summarization. The effect with other LLMs or open-source models is unknown, though cross-model labeling validation suggests the phenomenon is not model-specific.
+**Same-LLM bias.** Claude Haiku was used for both labeling and summarization of the Amazon review datasets. Its internal biases could create artificial alignment between labels and summaries. This concern is mitigated by four converging lines of evidence: (1) the effect holds with human-created labels on app reviews ($p = 0.02$); (2) the effect persists with independent GPT-5-mini labels ($\Delta$ = +0.17); (3) the effect fails on CFPB data, which would not be expected if same-model alignment were the primary driver; and (4) a neutral summary prompt with no task awareness captures 85% of the improvement. We verified that only 0.6% of summaries contain exact taxonomy phrases, reflecting natural language overlap rather than prompt leakage. Nevertheless, full resolution would require testing with a second summarization model.
+
+**Single summarization model.** Only Claude Haiku was tested for summarization. The effect with other LLMs or open-source models is unknown.
 
 **Paraphrase control sensitivity.** The paraphrase result may depend on the specific instruction used. Alternative formulations could yield different results.
 
 **Embedding model recency.** Our experiments used embedding models from 2021--2023. Whether the effect persists with more recent architectures (e.g., Gemini Embedding, Qwen3-Embedding) remains an open question.
 
-**Prompt ablation scope.** The prompt ablation was tested only when the clustering target aligns with the primary content of the text. The ratio of generic to prompt-specific benefit may differ when the clustering target is peripheral to the main content.
+**Prompt ablation scope.** The prompt ablation was tested only when the clustering target aligns with the primary content of the text---in product reviews, the complaint type IS the primary content. We expect the ratio of generic to prompt-specific benefit to shift substantially when the clustering target is peripheral to the main content. For example, clustering academic abstracts by methodology rather than topic, support emails by product version rather than issue type, or medical notes by patient affect rather than diagnosis. In these cases, a generic summary would foreground the primary content and lose the target dimension, making prompt design critical rather than optional.
+
+**Multi-label ceiling.** The single-label assumption likely contributes to the V-measure plateau in the 0.4--0.5 range observed across both raw and summary embeddings. Reviews expressing multiple complaint types cannot be perfectly assigned to one cluster under a single-label scheme, placing a ceiling on achievable clustering quality independent of the embedding method.
 
 ## Practical Implications
 
