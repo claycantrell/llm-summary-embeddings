@@ -243,8 +243,8 @@ Neither variant reproduced the gains from abstractive summarization ($\Delta$ = 
 **Example 1** (WiFi and Connectivity Issues)
 
 - *Raw (56 words)*: "I am ready to throw this thing away. In the middle of watching shows, it completely stops working. I can sometimes disconnect and reconnect to the internet but most of the time I have to unplug it, plug it back in, wait 30 minutes and then it will work for a short time."
-- *Summary (8 words)*: "Device frequently disconnects from internet requiring physical reboot."
-- *Paraphrase (42 words)*: "The device frequently stops working while streaming. Sometimes reconnecting to the internet resolves the issue, but usually the device must be physically unplugged and restarted, requiring approximately 30 minutes before it functions again for a short period."
+- *Summary (8 words)*: "Frequent freezing and crashing requiring constant power resets."
+- *Paraphrase (73 words)*: "The device stops working completely in the middle of watching shows. Sometimes I can disconnect and reconnect to the internet, but most times I have to completely unplug the device so it can reset. I have great internet service, and everything else connected to the internet continues working fine. I would not recommend this product to anyone. I do not know whether I received a faulty device or if they are generally unreliable."
 
 **Example 2** (Hardware Failure or Defects)
 
@@ -255,7 +255,7 @@ Neither variant reproduced the gains from abstractive summarization ($\Delta$ = 
 **Example 3** (Voice Recognition Problems)
 
 - *Raw (34 words)*: "The device is wonderful until Lexi says 'I don't know how to respond to that'. Not major but iritatating to an older tech challenged person that wants to watch something."
-- *Summary (11 words)*: "Voice recognition frequently fails without clear guidance on its limitations."
+- *Summary (12 words)*: "Voice recognition frequently fails without clear guidance on its limitations or workarounds."
 - *Paraphrase (30 words)*: "The device works well except when the voice assistant responds with 'I don't know how to respond to that,' which is frustrating for older users with limited technical experience."
 
 ### K.2 Extractive Baselines (Fire TV Stick, BGE)
