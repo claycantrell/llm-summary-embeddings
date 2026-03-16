@@ -1,5 +1,5 @@
 ---
-title: "LLM Rewriting as Geometric Transformation: How Summarization Reshapes Embedding Space for Improved Clustering"
+title: "How Summarization Reshapes Embedding Space for Clustering Noisy Informal Text"
 author:
   - name: "Clay Cantrell"
     affiliation: "Independent Researcher"
