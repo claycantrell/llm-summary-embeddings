@@ -1,0 +1,55 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+*.swp
+*.swo
+*~
+# .vscode/ is intentionally tracked — it contains shared project settings
+.idea/
+
+# Environment
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Build output — keep final manuscripts, ignore intermediates
+output/*.aux
+output/*.log
+output/*.out
+output/*.toc
+output/*.bbl
+output/*.blg
+output/*.fdb_latexmk
+output/*.fls
+output/*.synctex.gz
+
+# LaTeX intermediates
+*.aux
+*.log
+*.out
+*.toc
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+
+# Papis cache
+library/**/cache/
+
+# nb internals
+.nb/
+
+# Scratch (brainstorming space — git-ignored by default)
+scratch/*
+!scratch/README.md
+
+# Node (for scite-cli)
+node_modules/
+
+# Uncomment to stop tracking source PDFs (they can be large):
+# sources/*.pdf

@@ -1,0 +1,224 @@
+# End-to-End Research Workflow
+
+A step-by-step walkthrough of a complete research session using this scaffold.
+
+---
+
+## 1. Define your research question
+
+Edit `outline.md` to set your working title, research question, and thesis statement. Sketch the section structure.
+
+```bash
+$EDITOR outline.md
+```
+
+---
+
+## 2. Search for papers
+
+Cast a wide net with Semantic Scholar:
+
+```bash
+make search QUERY="cognitive augmentation artificial intelligence"
+```
+
+For more control (filter by year, sort by citations):
+
+```bash
+make search-py QUERY="cognitive enhancement tools"
+```
+
+Or drop into Python for custom queries:
+
+```python
+from semanticscholar import SemanticScholar
+sch = SemanticScholar()
+results = sch.search_paper("spaced repetition AI", year="2020-2025", limit=20)
+top = sorted(results, key=lambda p: p.citationCount or 0, reverse=True)[:10]
+for p in top:
+    print(f"[{p.year}] {p.citationCount} cites | {p.title} | DOI:{p.externalIds.get('DOI','?')}")
+```
+
+---
+
+## 3. Download papers
+
+Grab PDFs by arXiv ID or DOI:
+
+```bash
+make fetch-arxiv ID="2301.00001"
+make fetch-doi DOI="10.1038/s41586-020-2649-2"
+```
+
+PDFs are saved to `sources/`.
+
+---
+
+## 4. Add to your library
+
+Import into papis with full metadata:
+
+```bash
+# By DOI (pulls metadata from CrossRef)
+make add-paper DOI="10.1038/s41586-020-2649-2"
+
+# By local PDF (prompts for metadata)
+make add-pdf PDF="sources/arxiv-2301.00001.pdf"
+```
+
+Papers are stored in `library/<slug>/` as `info.yaml` + PDF.
+
+---
+
+## 5. Extract text
+
+Convert PDFs to searchable plain text:
+
+```bash
+# Single paper
+make extract-text PDF="sources/paper.pdf"
+
+# All papers at once
+make extract-all
+```
+
+---
+
+## 6. Read and triage
+
+To decide if a paper is worth a deep read, extract the text and ask Claude to summarize it:
+
+```bash
+make extract-text PDF="sources/paper.pdf"
+```
+
+Claude can read the extracted text directly and provide a summary — no separate summarization tool needed.
+
+---
+
+## 7. Verify citations
+
+Before citing a paper, check if its findings hold up:
+
+```bash
+make verify DOI="10.1038/s41586-020-2649-2"
+```
+
+Look for the supporting vs. contradicting ratio. Papers with high contradiction counts warrant closer scrutiny.
+
+---
+
+## 8. Take reading notes
+
+Create a structured note for each paper you read closely:
+
+```bash
+make new-note TITLE="Cognitive Enhancement in the Age of AI"
+```
+
+This creates `notes/2026-03-08-cognitive-enhancement-in-the-age-of-ai.md` with sections for Summary, Key Findings, Methodology, Relevance, Quotes, and Follow-ups. Fill it in as you read.
+
+Search across your notes later:
+
+```bash
+make search-notes QUERY="working memory"
+```
+
+---
+
+## 9. Write your manuscript
+
+Edit `manuscript/main.md` using standard markdown with citation keys:
+
+```markdown
+Cognitive load theory [@sweller1988] provides a framework for understanding
+how AI tools might reduce extraneous processing demands. Recent work
+[@smith2024; @jones2023] extends this to human-AI collaboration contexts.
+```
+
+Use `templates/section-draft.md` to draft individual sections before integrating.
+
+---
+
+## 10. Build the bibliography
+
+Export your papis library to the BibTeX file that Pandoc reads:
+
+```bash
+make bib
+```
+
+This regenerates `bibliography/references.bib` from all entries in `library/`.
+
+---
+
+## 11. Compile your manuscript
+
+Build the final output:
+
+```bash
+# PDF (requires LaTeX)
+make pdf
+
+# Word document (for journal submissions)
+make docx
+
+# HTML (for sharing/preview)
+make html
+
+# All three at once
+make all
+```
+
+Outputs land in `output/`. Check `make wordcount` to track progress.
+
+---
+
+## 12. Iterate
+
+The cycle repeats. As you write, you will discover gaps:
+
+- New terms to search: `make search QUERY="..."`
+- New papers to download: `make fetch-doi DOI="..."`
+- New papers to add to the library: `make add-paper DOI="..."`
+- New notes to take: `make new-note TITLE="..."`
+- Rebuild the bibliography: `make bib`
+- Recompile: `make pdf`
+
+---
+
+## Quick reference
+
+| Stage | Command | Docs |
+|---|---|---|
+| Search | `make search QUERY="..."` | [01-discovery.md](01-discovery.md) |
+| Download | `make fetch-doi DOI="..."` | [02-retrieval.md](02-retrieval.md) |
+| Add to library | `make add-paper DOI="..."` | [05-reference-management.md](05-reference-management.md) |
+| Extract text | `make extract-text PDF="..."` | [04-pdf-extraction.md](04-pdf-extraction.md) |
+| Verify | `make verify DOI="..."` | [03-summarization.md](03-summarization.md) |
+| New note | `make new-note TITLE="..."` | [06-note-taking.md](06-note-taking.md) |
+| Build bib | `make bib` | [05-reference-management.md](05-reference-management.md) |
+| Compile PDF | `make pdf` | [07-writing-and-publishing.md](07-writing-and-publishing.md) |
+| All formats | `make all` | [07-writing-and-publishing.md](07-writing-and-publishing.md) |
+| Word count | `make wordcount` | [07-writing-and-publishing.md](07-writing-and-publishing.md) |
+
+## Directory map
+
+```
+.
+├── bibliography/
+│   ├── references.bib       ← auto-generated by `make bib`
+│   └── citation-style.csl   ← download from zotero.org/styles
+├── library/                  ← papis stores papers here (YAML + PDF)
+├── manuscript/
+│   └── main.md              ← your manuscript (write here)
+├── notes/                    ← reading notes (`make new-note`)
+├── output/                   ← compiled PDF/DOCX/HTML (`make pdf`)
+├── sources/                  ← downloaded PDFs (`make fetch-doi`)
+├── templates/
+│   ├── note.md              ← reading note template
+│   └── section-draft.md     ← section draft template
+├── Makefile                  ← all shortcuts live here
+├── outline.md               ← research outline
+└── setup.sh                 ← one-command installer
+```
