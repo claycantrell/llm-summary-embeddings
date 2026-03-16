@@ -19,7 +19,7 @@ Experiments complete. Ready to begin writing.
 
 ### Highest priority (needed for credible submission)
 - [ ] Human validation of ~100-200 Amazon review labels — single biggest vulnerability
-- [ ] Re-label Fire TV Stick reviews with a different LLM (GPT-4o-mini) to rule out same-LLM bias
+- [x] Cross-model validation — GPT-5-mini labels confirm effect (+0.17 delta, kappa=0.75)
 - [x] Non-KMeans robustness check — agglomerative (Ward) confirms 9/9 consistent
 - [x] Representation analysis — within/between ratio halves across all products; effect is centroid separation, not cluster compaction
 
