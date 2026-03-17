@@ -141,11 +141,11 @@ The largest improvements appeared on Fitbit Charge (deltas of +0.17 to +0.28), w
 
 Agglomerative clustering (Ward linkage) confirmed the same pattern: summary embeddings outperformed raw embeddings in all 9 conditions, with deltas ranging from +0.044 to +0.267, confirming the effect is not specific to KMeans' spherical cluster assumption.
 
-![**Figure 1.** UMAP projections of raw review embeddings (left) versus LLM summary embeddings (right) for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse, overlapping structure; summary embeddings show visible regional clustering by category. Used as illustration, not primary evidence.](figures/umap_comparison_bge.png)
+![**Figure 1.** UMAP projections of raw review embeddings (left) versus LLM summary embeddings (right) for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse, overlapping structure; summary embeddings show visible regional clustering by category.](figures/umap_comparison_bge.png)
 
-Figure 1 illustrates the geometric shift on the Fire TV Stick dataset. UMAP projections of all three products are provided in Figure 2.
+Figure 1 illustrates the geometric shift on the Fire TV Stick dataset. Figure 2 shows the same pattern across all three products. Note that UMAP's nonlinear scaling can make clusters appear visually tighter when centroids separate, even when within-class distances are unchanged in the original high-dimensional space; the direct cosine similarity measurements in Table 3 are the primary geometric evidence.
 
-![**Figure 2.** UMAP projections across all three products (Fire TV Stick, Fitbit Charge, Senso Bluetooth Headphones), raw versus summary embeddings, BGE-base-en-v1.5.](figures/umap_all_products.png)
+![**Figure 2.** UMAP projections across all three products (Fire TV Stick, Fitbit Charge, Senso Bluetooth Headphones), raw versus summary embeddings, BGE-base-en-v1.5. All p < 0.001.](figures/umap_all_products.png)
 
 ## Compression and Normalization Jointly Produce the Observed Gains
 
