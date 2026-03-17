@@ -205,6 +205,16 @@ The coarse-graining tradeoff deserves attention. Summarization may improve globa
 
 **Prompt ablation scope.** Tested only when the clustering target aligns with primary content. When the target is peripheral (e.g., clustering abstracts by methodology), prompt specificity may matter more.
 
+## Deployment Considerations
+
+In a production feedback-analysis pipeline, summarization-before-embedding slots in as a preprocessing step between ingestion and indexing. When new reviews or support tickets arrive, each document is summarized (one LLM call per document, batched for efficiency), then embedded and added to the vector index. Downstream clustering, topic discovery, and issue-triage workflows operate on the summary embeddings without modification.
+
+The operational cost is modest. Using Claude Haiku at current pricing, summarizing 1,000 documents costs approximately \$0.05 and takes roughly 2 minutes (batches of 20, ~2.5 seconds per API call). At 100,000 documents the cost is under \$5 and completes in approximately 3.5 hours; this can be parallelized across batches. Embedding with a local model (BGE-base-en-v1.5) adds roughly 10 seconds per 1,000 documents. The summarization step is index-time only---retrieval and clustering latency are unchanged.
+
+The practical payoff is improved issue discovery. Product teams clustering customer feedback to identify recurring complaints, support organizations triaging incoming tickets by issue type, or analysts grouping app store reviews for trend analysis would benefit from cleaner cluster boundaries. The approach is most valuable when the input text is informal and varied---the exact regime where embedding models struggle most with unsupervised organization.
+
+Practitioners should not apply this to structured or semi-structured text (e.g., financial complaints, medical records, legal documents) where fine-grained details carry discriminative signal, as our CFPB experiments show degradation in that regime.
+
 # Conclusion
 
 Abstractive summarization improves embedding-based clustering of noisy informal text through compression-forced aspect selection and expression normalization, yielding embeddings with greater inter-class separation. The effect reaches significance across three products, three models, and 9 of 9 conditions, with corroboration on human-labeled data. On structured text, the same transformation degrades clustering---a boundary condition that distinguishes this contribution from a generic claim about LLM preprocessing.
