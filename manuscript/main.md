@@ -3,7 +3,7 @@ title: "How Abstractive Summarization Reshapes Embedding Space for Clustering No
 author: "Clay Cantrell (Independent Researcher, clay.cantrell@me.com)"
 date: "March 2026"
 abstract: |
-  Embedding models map text to fixed-dimensional vectors, but noisy informal text produces embedding spaces where semantically equivalent documents are scattered by surface-level variation in style, tone, and narrative. We show that a single LLM abstractive summarization step improves V-measure by 0.08--0.28 (49--115\% relative) across three consumer product review datasets and three embedding models (9 of 9 tests, $p < 0.01$; 1,000-iteration bootstrap). The mechanism requires both compression and normalization: neither paraphrasing (two variants) nor extractive selection (four methods) reproduced the gains. Geometric analysis shows the effect operates through increased inter-class centroid separation rather than within-class compaction. On structured factual text, summarization degrades clustering. The findings are corroborated on a human-labeled dataset and validated through cross-model relabeling ($\kappa = 0.75$).
+  Embedding models map text to fixed-dimensional vectors, but noisy informal text produces embedding spaces where semantically equivalent documents are scattered by surface-level variation in style, tone, and narrative. We show that a single LLM abstractive summarization step improves V-measure by 0.08--0.28 (49--115\% relative) across three consumer product review datasets and three embedding models (9 of 9 tests, $p < 0.01$; 1,000-iteration bootstrap). The evidence suggests the mechanism depends on both compression and normalization: neither paraphrasing (two variants) nor extractive selection (four methods) reproduced the gains. Geometric analysis shows the effect operates through increased inter-class centroid separation rather than within-class compaction. On structured factual text, summarization degrades clustering. The findings are corroborated on a human-labeled dataset and validated through cross-model relabeling ($\kappa = 0.75$).
 keywords:
   - text embeddings
   - clustering
@@ -26,7 +26,7 @@ We show that a single LLM summarization step improves V-measure by +0.08 to +0.2
 
 Prior work has explored LLM-based rewriting for retrieval [@sarthi2024raptor; @gao2023hyde; @wu2024llmaugmented], embedding quality [@enrichment2024], and controllable clustering [@controllable2025], and has tested summarization in clustering pipelines with mixed results [@textclustering2024]. Our contribution is distinct in isolating generic abstractive summarization as a pre-embedding transformation and analyzing its effect on clustering through direct geometric evidence together with a clear boundary condition on structured text.
 
-This paper contributes: (1) evidence that abstractive summarization consistently improves clustering of noisy informal text across three products and three embedding models; (2) a two-part mechanism---compression forces aspect prioritization while rewriting normalizes expression---supported by ablations and geometric analysis showing primarily centroid separation; and (3) a boundary condition showing that the same transformation degrades clustering on structured factual text where fine-grained details distinguish categories.
+This paper contributes: (1) evidence that abstractive summarization consistently improves clustering of noisy informal text across three products and three embedding models; (2) ablation evidence suggesting a two-part mechanism---compression encourages aspect prioritization while rewriting normalizes expression---supported and geometric analysis showing primarily centroid separation; and (3) a boundary condition showing that the same transformation degrades clustering on structured factual text where fine-grained details distinguish categories.
 
 # Related Work
 
@@ -40,7 +40,7 @@ Controllable Clustering with LLM-driven Embeddings [@controllable2025] studies w
 
 ## Summarization in Clustering Pipelines
 
-Viswanathan et al. [@textclustering2024] test summarization as a dimensionality-reduction step in LLM-embedding clustering pipelines and report mixed results. Rather than testing summarization as a general-purpose preprocessing step, we identify a specific text regime where it helps and another where it degrades performance, and we provide a mechanism that explains the difference. Their mixed results are consistent with our boundary-condition finding.
+Petukhova et al. [@textclustering2024] test summarization as a dimensionality-reduction step in LLM-embedding clustering pipelines and report mixed results. Rather than testing summarization as a general-purpose preprocessing step, we identify a specific text regime where it helps and another where it degrades performance, and we provide a mechanism that explains the difference. Their mixed results are consistent with our boundary-condition finding.
 
 ## Retrieval Granularity
 
@@ -121,11 +121,11 @@ Table 1: V-measure comparison (1,000-iteration bootstrap). All 9 conditions are 
 
 ARI improvements were of similar magnitude (+0.10 to +0.35; see Appendix). The largest improvements appeared on Fitbit Charge, where reviews tend to be particularly narrative-heavy. Agglomerative clustering (Ward linkage) confirmed the same pattern in all 9 conditions (deltas +0.044 to +0.267).
 
-![**Figure 1.** UMAP projections of raw review embeddings (left) versus LLM summary embeddings (right) for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse, overlapping structure; summary embeddings show visible regional clustering by category.](figures/umap_comparison_bge.png)
+![UMAP projections of raw (left) versus summary (right) embeddings for Fire TV Stick reviews, colored by complaint type (BGE-base-en-v1.5). Raw embeddings exhibit diffuse structure; summary embeddings show regional clustering.](figures/umap_comparison_bge.png)
 
-Figure 1 illustrates the geometric shift. Figure 2 shows the same pattern across all three products. Note that UMAP's nonlinear scaling can make clusters appear visually tighter when centroids separate, even when within-class distances are unchanged in the original high-dimensional space; the direct cosine similarity measurements in Table 3 are the primary geometric evidence.
+The figures above and below illustrate the geometric shift. Note that UMAP's nonlinear scaling can make clusters appear visually tighter when centroids separate, even when within-class distances are unchanged in the original space; the cosine similarity measurements in Table 3 are the primary geometric evidence.
 
-![**Figure 2.** UMAP projections across all three products, raw versus summary embeddings, BGE-base-en-v1.5. All p < 0.001.](figures/umap_all_products.png)
+![UMAP projections across all three products, raw versus summary embeddings, BGE-base-en-v1.5.](figures/umap_all_products.png)
 
 ## Mechanism Ablations
 
@@ -181,7 +181,7 @@ CFPB complaints are structured and factual. Complainants state their issue direc
 
 ## Mechanism
 
-Our ablations suggest the clustering improvement depends on two co-occurring operations. Compression forces prioritization among candidate aspects: a review mentioning WiFi problems, a broken remote, and general disappointment must be distilled to one or two points. Expression normalization ensures that two different phrasings of the same complaint produce similar output. In our experiments, neither operation alone reproduced the gains.
+Our ablations suggest the clustering improvement depends on two co-occurring operations. Compression encourages prioritization among candidate aspects: a review mentioning WiFi problems, a broken remote, and general disappointment must be distilled to one or two points. Expression normalization ensures that two different phrasings of the same complaint produce similar output. In our experiments, neither operation alone reproduced the gains.
 
 The geometric signature is centroid separation rather than cluster compaction. Summarization does not substantially change within-class similarity but makes different categories more distinguishable. Per-class analysis reveals that specific complaint types (voice recognition: +0.034 intra-class delta; remote control: +0.031) show the largest within-class tightening, while broader categories (content availability: -0.040) show slight decreases, suggesting the benefit is largest for well-defined complaint types.
 
